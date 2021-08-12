@@ -26,7 +26,13 @@ const getSubscriptionOrders = async (req, res) => {
 
   try {
     const result = await query(
-      `select * from orders where subscriptionId = '${subscriptionId}'`
+      `SELECT orderId, subscriptionId, deliveryDate, products, totalAmount,
+      case paymentMethod 
+      when 'BKM' then 'BKM' when 'PAYATDOOR' then 'Kapıda' when 'MASTERPASS' then 'Kredi Kartlı' when 'HOPI' then 'Hopi' end paymentMethod,
+      case status
+      when 'NEW' then 'Yeni' when 'CONFIRMED' then 'İletildi' when 'COMPLETED' then 'Teslim edildi' when 'CANCELED' then 'İptal' 
+      end status
+      FROM bisu.orders where subscriptionId = '${subscriptionId}';`
     );
 
     if (isEmpty(result)) {
